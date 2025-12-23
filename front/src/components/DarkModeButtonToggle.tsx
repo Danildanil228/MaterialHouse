@@ -1,35 +1,26 @@
 import { useTheme } from "./theme-provider"
 import { Button } from "./ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Moon, Sun } from "lucide-react"
 
 export default function DarkModeButtonToggle(){
-    const {setTheme} = useTheme()
+    const { theme, setTheme } = useTheme()
+    
+    const toggleTheme = () => {
+        setTheme(theme === "dark" ? "light" : "dark")
+    }
+    
     return(
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
-                    <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                    <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-                    <span className="sr-only">Тема</span>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                Светлая
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                Тёмная
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                Системная
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
+        <Button 
+            variant="outline" 
+            size="icon"
+            onClick={toggleTheme}
+            title={theme === "dark" ? "Переключить на светлую тему" : "Переключить на темную тему"}
+        >
+            <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+            <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+            <span className="sr-only">
+                {theme === "dark" ? "Переключить на светлую тему" : "Переключить на темную тему"}
+            </span>
+        </Button>
     )
 }
