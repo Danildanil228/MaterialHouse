@@ -1,15 +1,20 @@
 import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { ThemeProvider } from "@/components/theme-provider"
 import Login from './Pages/Login'
-import DarkModeButtonToggle from './components/DarkModeButtonToggle'
+import Main from './Pages/Main'
 
 function App() {
-
   return (
-    <>
-      <Login/>
-      {/* <DarkModeButtonToggle/> */}
-    </>
+    <BrowserRouter>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/main" element={<Main />} />
+          <Route path="/" element={<Navigate to="/login" />} />
+        </Routes>
+      </ThemeProvider>
+    </BrowserRouter>
   )
 }
 

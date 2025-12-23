@@ -1,45 +1,104 @@
 const express = require('express');
 const cors = require('cors');
-const pool = require('./server');
-const compression = require('compression');
-const app = express();
-app.use(compression());
-app.use(express.json());
+const { Pool } = require('pg');
 
+const app = express();
 const PORT = 3000;
 
-app.listen(PORT, () => {
-  console.log(`Сервер запущен на http://localhost:${PORT}`);
+// Создаем пул подключений к БД
+const pool = new Pool({
+    user: "postgres",
+    password: "1234",
+    host: 'localhost',
+    port: '5432',
+    database: "materialHousedb"
 });
 
+// Логирование всех запросов
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} ${req.method} ${req.url}`);
+  next();
+});
+
+// CORS middleware
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
-    const allowedOrigins = [
-      'http://localhost:5173',
-      'http://127.0.0.1:5173'
-    ];
     if (origin.includes(':5173')) {
       return callback(null, true);
     }
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      return callback(null, true);
-    }
-    
-    return callback(new Error('Not allowed by CORS'));
+    return callback(null, true);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.get('/users', async (req, res) => {
+app.use(express.json());
+
+// Эндпоинт логина
+app.post('/login', async (req, res) => {
+  console.log('=== ЗАПРОС НА /LOGIN ===');
+  console.log('Тело запроса:', req.body);
+  console.log('Заголовки:', req.headers);
+  
   try {
-    const result = await pool.query('SELECT * FROM users');
-    res.json(result.rows);
+    const { username, password } = req.body;
+    
+    console.log('Получены данные:', { username, password });
+    
+    if (!username || !password) {
+      console.log('Ошибка: нет логина или пароля');
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Логин и пароль обязательны' 
+      });
+    }
+    
+    console.log('Выполняем запрос к БД...');
+    const result = await pool.query(
+      'SELECT * FROM users WHERE username = $1 AND password = $2', 
+      [username, password]
+    );
+    
+    console.log('Результат БД:', result.rows);
+    console.log('Найдено записей:', result.rows.length);
+    
+    if (result.rows.length === 0) {
+      console.log('Пользователь не найден');
+      return res.status(401).json({ 
+        success: false, 
+        error: 'Неверный логин или пароль' 
+      });
+    }
+    
+    const user = result.rows[0];
+    console.log('Успешная авторизация для:', user.username);
+    
+    res.json({ 
+      success: true, 
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      }
+    });
+    
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Ошибка сервера');
+    console.error('ОШИБКА В /LOGIN:', err);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Ошибка сервера' 
+    });
   }
+});
+
+// Тестовый эндпоинт
+app.get('/test', (req, res) => {
+  res.json({ message: 'Сервер работает!' });
+});
+
+// Запуск сервера
+app.listen(PORT, () => {
+  console.log(`Сервер запущен на http://localhost:${PORT}`);
 });
