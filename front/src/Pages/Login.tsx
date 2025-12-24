@@ -43,11 +43,7 @@ export default function Login() {
             <div className="text-center">
                 <div>
                     <h1 className="mb-4">Авторизация в систему</h1>
-                    {error && (
-                      <div className="mb-4 p-2 bg-red-500 text-white rounded">
-                        {error}
-                      </div>
-                    )}
+                    
                     <div className="grid gap-5">
                         <input 
                             type="text" 
@@ -73,6 +69,11 @@ export default function Login() {
                             </button>
                             <DarkModeButtonToggle/>
                         </div>
+                        {error && (
+                      <div className="mb-4 p-2 text-xl! text-white rounded">
+                        {error}
+                      </div>
+                    )}
                     </div>
                 </div>
             </div>
