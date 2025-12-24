@@ -7,6 +7,7 @@ import Layout from './components/Layout';
 import Notifications from './Pages/Notifications';
 import ProtectedRoute from './components/ProtectedRoute';
 import AddUser from './Pages/AddUser';
+import AllUsers from './Pages/AllUsers';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/materials" element={<div>Материалы (страница в разработке)</div>} />
             <Route path="/add" element={<AddUser/>} />
             <Route path="/profile" element={<div>Профиль (страница в разработке)</div>} />
+            <Route path='/allusers' element={<AllUsers/>} />
           </Route>
           
           {/* Резервный редирект */}

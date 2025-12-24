@@ -183,6 +183,88 @@ app.delete('/notifications', async (req, res) => {
   }
 });
 
+//USERS
+app.post('/users/add', async (req, res) => {
+  try {
+    const { username, password, name, surname, role } = req.body;
+    
+    // Проверяем, нет ли уже такого username
+    const checkResult = await pool.query(
+      'SELECT id FROM users WHERE username = $1',
+      [username]
+    );
+    
+    if (checkResult.rows.length > 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Пользователь с таким логином уже существует'
+      });
+    }
+    
+    // Добавляем пользователя
+    const result = await pool.query(
+      `INSERT INTO users (username, password, role) 
+       VALUES ($1, $2, $3) RETURNING id, username, role`,
+      [username, password, role]
+    );
+    
+    res.json({
+      success: true,
+      user: result.rows[0]
+    });
+    
+  } catch (err) {
+    console.error('Ошибка создания пользователя:', err);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Ошибка сервера' 
+    });
+  }
+});
+
+
+// Удалить пользователя
+app.delete('/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    await pool.query('DELETE FROM users WHERE id = $1', [id]);
+    
+    res.json({ 
+      success: true, 
+      message: 'Пользователь удален' 
+    });
+    
+  } catch (err) {
+    console.error('Ошибка удаления пользователя:', err);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Ошибка сервера' 
+    });
+  }
+});
+
+// Получить всех пользователей
+app.get('/users', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * from users'
+    );
+    
+    res.json({
+      success: true,
+      users: result.rows
+    });
+    
+  } catch (err) {
+    console.error('Ошибка получения пользователей:', err);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Ошибка сервера' 
+    });
+  }
+});
+
 // Запуск сервера
 server.listen(PORT, () => {
   console.log(`Сервер запущен на http://localhost:${PORT}`);
