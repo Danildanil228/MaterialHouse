@@ -27,7 +27,7 @@ import axios from "axios";
 import { API_BASE_URL } from "@/components/api";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { io } from 'socket.io-client';
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface User {
   id: number;
@@ -87,7 +87,7 @@ export default function AllUsers() {
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
+          } className="scale-50 sm:scale-100"
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -95,6 +95,7 @@ export default function AllUsers() {
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
+          className="scale-50 sm:scale-100"
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
         />
@@ -290,7 +291,7 @@ export default function AllUsers() {
               </span>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                <Button variant="destructive" >Удалить выбранных пользователей</Button>
+                <Button variant="destructive" >Удалить пользователей</Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                 <AlertDialogHeader>
@@ -306,6 +307,13 @@ export default function AllUsers() {
           )}
           
           <div className="ml-auto">
+            <Button
+              variant="outline"
+              onClick={fetchUsers}
+              className="ml-2"
+            >
+              <Link to='/add' className="items-center flex">Добавить</Link>
+            </Button>
             <Button
               variant="outline"
               onClick={fetchUsers}

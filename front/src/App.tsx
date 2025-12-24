@@ -8,11 +8,15 @@ import Notifications from './Pages/Notifications';
 import ProtectedRoute from './components/ProtectedRoute';
 import AddUser from './Pages/AddUser';
 import AllUsers from './Pages/AllUsers';
+import { NotificationProvider } from './contexts/NotificationContext';
+import ToastNotificationManager from './components/ToastNotificationManager';
 
 function App() {
   return (
     <BrowserRouter>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <NotificationProvider>
+          <ToastNotificationManager />
         <Routes>
           {/* Публичный маршрут - без навигации */}
           <Route path="/login" element={<Login />} />
@@ -25,16 +29,30 @@ function App() {
           }>
             <Route index element={<Navigate to="/main" replace />} />
             <Route path="/main" element={<Main />} />
-            <Route path="/Notifications" element={<Notifications />} />
+            <Route path="/notifications" element={
+              <ProtectedRoute requireAdmin={true}>
+                <Notifications />
+              </ProtectedRoute>
+            } />
             <Route path="/materials" element={<div>Материалы (страница в разработке)</div>} />
-            <Route path="/add" element={<AddUser/>} />
             <Route path="/profile" element={<div>Профиль (страница в разработке)</div>} />
-            <Route path='/allusers' element={<AllUsers/>} />
+            <Route path="/add" element={
+              <ProtectedRoute requireAdmin={true}>
+                <AddUser />
+              </ProtectedRoute>
+            } />
+            
+            <Route path='/allusers' element={
+              <ProtectedRoute requireAdmin={true}>
+                <AllUsers />
+              </ProtectedRoute>
+            } />
           </Route>
           
           {/* Резервный редирект */}
           <Route path="*" element={<Navigate to="/main" replace />} />
         </Routes>
+        </NotificationProvider>
       </ThemeProvider>
     </BrowserRouter>
   );

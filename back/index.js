@@ -182,6 +182,67 @@ app.delete('/notifications', async (req, res) => {
     });
   }
 });
+// Получить количество непрочитанных уведомлений
+app.get('/notifications/unread-count', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT COUNT(*) as count FROM notifications WHERE read = false`
+    );
+    
+    res.json({
+      success: true,
+      count: parseInt(result.rows[0].count)
+    });
+  } catch (err) {
+    console.error('Ошибка получения количества:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Ошибка сервера'
+    });
+  }
+});
+
+// Отметить уведомления как прочитанные
+app.put('/notifications/mark-as-read', async (req, res) => {
+  try {
+    await pool.query(
+      'UPDATE notifications SET read = true WHERE read = false'
+    );
+    
+    res.json({
+      success: true,
+      message: 'Все уведомления отмечены как прочитанные'
+    });
+  } catch (err) {
+    console.error('Ошибка обновления:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Ошибка сервера'
+    });
+  }
+});
+
+app.put('/notifications/:id/read', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    await pool.query(
+      'UPDATE notifications SET read = true WHERE id = $1',
+      [id]
+    );
+    
+    res.json({
+      success: true,
+      message: 'Уведомление отмечено как прочитанное'
+    });
+  } catch (err) {
+    console.error('Ошибка обновления уведомления:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Ошибка сервера'
+    });
+  }
+});
 
 //USERS
 app.post('/users/add', async (req, res) => {
