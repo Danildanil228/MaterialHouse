@@ -26,6 +26,7 @@ import {
 import axios from "axios";
 import { API_BASE_URL } from "@/components/api";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { io } from 'socket.io-client';
 
 interface User {
   id: number;
@@ -41,6 +42,27 @@ export default function AllUsers() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+  
+  useEffect(() => {
+  fetchUsers();
+  
+  // Подключаемся к сокету для отслеживания удаления пользователя
+  const socket = io(API_BASE_URL);
+  
+  socket.on('user_deleted', (data: any) => {
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    // Если текущего пользователя удалили, выходим из системы
+    if (currentUser.id === data.userId) {
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+  });
+  
+  return () => {
+    socket.disconnect();
+  };
+}, []);
 
   const columns: ColumnDef<User>[] = [
     {
@@ -156,36 +178,55 @@ export default function AllUsers() {
   }, []);
 
   const handleDeleteUser = async (id: number) => {
-    try {
-      await axios.delete(`${API_BASE_URL}/users/${id}`);
-      setUsers(users.filter(user => user.id !== id));
-    } catch (error) {
-      console.error("Ошибка удаления пользователя:", error);
-      alert("Не удалось удалить пользователя");
-    }
-  };
+  // Получаем текущего пользователя
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  
+  // Проверяем, не пытается ли пользователь удалить самого себя
+  if (currentUser.id === id) {
+    alert("Вы не можете удалить свой собственный аккаунт!");
+    return;
+  }
+
+  try {
+    await axios.delete(`${API_BASE_URL}/users/${id}`);
+    setUsers(users.filter(user => user.id !== id));
+  } catch (error) {
+    console.error("Ошибка удаления пользователя:", error);
+    alert("Не удалось удалить пользователя");
+  }
+};
 
   const handleDeleteSelected = async () => {
-    const selectedRows = table.getFilteredSelectedRowModel().rows;
-    const selectedIds = selectedRows.map(row => row.original.id);
+  const selectedRows = table.getFilteredSelectedRowModel().rows;
+  const selectedIds = selectedRows.map(row => row.original.id);
+  
+  // Получаем текущего пользователя
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  
+  // Проверяем, не пытается ли пользователь удалить самого себя
+  if (selectedIds.includes(currentUser.id)) {
+    alert("Вы не можете удалить свой собственный аккаунт!");
+    return;
+  }
 
-    if (selectedIds.length === 0) {
-      alert("Выберите пользователей для удаления");
-      return;
-    }
+  if (selectedIds.length === 0) {
+    alert("Выберите пользователей для удаления");
+    return;
+  }
 
-    try {
-      for (const id of selectedIds) {
-        await axios.delete(`${API_BASE_URL}/users/${id}`);
-      }
-      
-      setUsers(users.filter(user => !selectedIds.includes(user.id)));
-      setRowSelection({});
-    } catch (error) {
-      console.error("Ошибка удаления пользователей:", error);
-      alert("Не удалось удалить пользователей");
+
+  try {
+    for (const id of selectedIds) {
+      await axios.delete(`${API_BASE_URL}/users/${id}`);
     }
-  };
+    
+    setUsers(users.filter(user => !selectedIds.includes(user.id)));
+    setRowSelection({});
+  } catch (error) {
+    console.error("Ошибка удаления пользователей:", error);
+    alert("Не удалось удалить пользователей");
+  }
+};
 
   const table = useReactTable({
     data: users,
