@@ -22,18 +22,19 @@ export default function Notifications() {
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    // Проверка админа
-    const userData = localStorage.getItem("user");
-    if (!userData) {
-      navigate("/login");
-      return;
-    }
-    
-    const user = JSON.parse(userData);
-    if (user.role !== 'admin') {
-      navigate("/main");
-      return;
-    }
+      const userData = localStorage.getItem("user");
+      if (!userData) {
+        navigate("/login");
+        return;
+      }
+      const user = JSON.parse(userData);
+      if (user.role !== 'admin') {
+        navigate("/main");
+        return;
+      }
+    }, [navigate]);
+
+  useEffect(() => {
     
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 5000);
@@ -69,6 +70,8 @@ export default function Notifications() {
         clearInterval(interval);
       }
     };
+
+    
     
   }, [navigate]);
 

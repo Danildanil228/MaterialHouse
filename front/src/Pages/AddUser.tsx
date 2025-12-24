@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import axios from "axios";
 import { API_BASE_URL } from "@/components/api";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface CreatedUser {
   username: string;
@@ -19,6 +19,20 @@ export default function AddUser() {
   const [role, setRole] = useState("");
   const [createdUsers, setCreatedUsers] = useState<CreatedUser[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (!userData) {
+      navigate("/login");
+      return;
+    }
+    const user = JSON.parse(userData);
+    if (user.role !== 'admin') {
+      navigate("/main");
+      return;
+    }
+  }, [navigate]);
 
   const generatePassword = () => {
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';

@@ -1,15 +1,15 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation,  } from 'react-router-dom';
 
 export default function DesktopNavigation() {
   const location = useLocation();
-  
   const navItems = [
     { path: '/main', label: 'Главная' },
     { path: '/materials', label: 'Материалы' },
-    { path: '/add', label: 'Добавить' },
+    { path: '/allusers', label: 'Все пользователи' },
+    { path: '/add', label: 'Добавить пользователя' },
     { path: '/profile', label: 'Профиль' },
     { path: '/notifications', label: 'Уведомления'},
-    {}
+    
   ];
   
   return (
