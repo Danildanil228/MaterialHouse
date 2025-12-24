@@ -25,10 +25,12 @@ import {
 } from "@/components/ui/table";
 import axios from "axios";
 import { API_BASE_URL } from "@/components/api";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 interface User {
   id: number;
   username: string;
+  password: string;
   role: string;
 }
 
@@ -76,12 +78,17 @@ export default function AllUsers() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Username
+            Имя пользователя
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
       },
       cell: ({ row }) => <div>{row.getValue("username")}</div>,
+    },
+    {
+      accessorKey: "password",
+      header: "Пароль",
+      cell: ({ row }) => <div>{row.getValue("password")}</div>,
     },
     {
       accessorKey: "role",
@@ -91,7 +98,7 @@ export default function AllUsers() {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Role
+            Роль
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -107,14 +114,25 @@ export default function AllUsers() {
         const user = row.original;
 
         return (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleDeleteUser(user.id)}
-            className="text-red-600 hover:text-red-800 hover:bg-red-50"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
+            <>
+            
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <img src="/trash.png" className="w-5 icon-theme-aware cursor-pointer" alt="" />
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Удалить пользователя</AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Отмена</AlertDialogCancel>
+                <AlertDialogAction onClick={() => handleDeleteUser(user.id)}>Удалить</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+            </>
+          
+          
         );
       },
     },
@@ -138,8 +156,6 @@ export default function AllUsers() {
   }, []);
 
   const handleDeleteUser = async (id: number) => {
-    if (!window.confirm("Удалить пользователя?")) return;
-
     try {
       await axios.delete(`${API_BASE_URL}/users/${id}`);
       setUsers(users.filter(user => user.id !== id));
@@ -157,8 +173,6 @@ export default function AllUsers() {
       alert("Выберите пользователей для удаления");
       return;
     }
-
-    if (!window.confirm(`Удалить ${selectedIds.length} пользователей?`)) return;
 
     try {
       for (const id of selectedIds) {
@@ -218,14 +232,20 @@ export default function AllUsers() {
               <span className="text-sm text-gray-600">
                 Выбрано: {selectedCount}
               </span>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleDeleteSelected}
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Удалить выбранные
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                <Button variant="destructive" >Удалить выбранных пользователей</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Вы уверены?</AlertDialogTitle>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Отмена</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteSelected}>Удалить</AlertDialogAction>
+                </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
             </div>
           )}
           

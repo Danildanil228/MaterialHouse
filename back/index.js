@@ -228,7 +228,47 @@ app.delete('/users/:id', async (req, res) => {
   try {
     const { id } = req.params;
     
+    // Получаем информацию о пользователе из запроса (можно передавать через middleware)
+    const userId = req.headers['user-id'] || req.query.currentUserId;
+    
+    // Проверяем, не пытается ли пользователь удалить самого себя
+    if (parseInt(id) === parseInt(userId)) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Вы не можете удалить свой собственный аккаунт' 
+      });
+    }
+    
+    // Получаем информацию о пользователе, которого собираемся удалить
+    const userToDeleteResult = await pool.query(
+      'SELECT * FROM users WHERE id = $1',
+      [id]
+    );
+    
+    if (userToDeleteResult.rows.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        error: 'Пользователь не найден' 
+      });
+    }
+    
+    const userToDelete = userToDeleteResult.rows[0];
+    
+    // Удаляем пользователя
     await pool.query('DELETE FROM users WHERE id = $1', [id]);
+    
+    // Отправляем уведомление всем админам о удалении пользователя
+    const adminResult = await pool.query("SELECT id FROM users WHERE role = 'admin'");
+    for (const admin of adminResult.rows) {
+      await pool.query(
+        `INSERT INTO notifications (user_id, type, title, message)
+        VALUES ($1, 'user_deleted', 'Пользователь удален', $2)`, 
+        [admin.id, `Пользователь ${userToDelete.username} был удален из системы`]
+      );
+    }
+    
+    // Отправляем событие через сокет для выхода пользователя
+    io.emit('force_logout', { userId: parseInt(id) });
     
     res.json({ 
       success: true, 
