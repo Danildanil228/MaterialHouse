@@ -17,12 +17,12 @@ export default function MobileNavigation() {
     { 
       path: '/add', 
       label: 'Добавить', 
-      icon: '/plus.svg'
+      icon: '/add.png'
     },
     { 
       path: '/profile', 
       label: 'Профиль', 
-      icon: '/user.svg'
+      icon: '/profile.png'
     },
   ];
   

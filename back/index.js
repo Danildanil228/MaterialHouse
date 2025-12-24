@@ -74,6 +74,15 @@ app.post('/login', async (req, res) => {
     
     const user = result.rows[0];
     console.log('Успешная авторизация для:', user.username);
+    //Уведомления
+    const adminResult = await pool.query("select id from users where role = 'admin' ")
+    for (const admin of adminResult.rows) {
+      await pool.query(
+        `INSERT INTO notifications (user_id, type, title, message)
+        VALUES ($1, 'login', 'Новый вход', $2)`, 
+        [user.id, `Пользователь ${user.username} вошел в систему`]
+      );
+    }
     
     res.json({ 
       success: true, 
@@ -93,6 +102,26 @@ app.post('/login', async (req, res) => {
     });
   }
 });
+
+//уведомления
+app.get('/notifications', async (req,res) => {
+  try{
+    const result = await pool.query (
+      `select n.*, u.username as user_name from notifications n left join users u on n.user_id = u.id
+      order by n.created_at desc limit 50`
+    );
+    res.json({
+    success: true, notifications: result.rows
+  })
+  }
+  
+  catch (err){
+    console.error('Ошибка', err);
+    res.status(500).json({
+      success: false, error: 'Ошибка сервера'
+    });
+  }
+})
 
 
 // Запуск сервера
