@@ -80,7 +80,8 @@ app.post('/login', async (req, res) => {
       user: {
         id: user.id,
         username: user.username,
-        email: user.email
+        role: user.role
+        
       }
     });
     
@@ -93,10 +94,6 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Тестовый эндпоинт
-app.get('/test', (req, res) => {
-  res.json({ message: 'Сервер работает!' });
-});
 
 // Запуск сервера
 app.listen(PORT, () => {

@@ -43,7 +43,6 @@ export default function Login() {
             <div className="text-center">
                 <div>
                     <h1 className="mb-4">Авторизация в систему</h1>
-                    
                     <div className="grid gap-5">
                         <input 
                             type="text" 
