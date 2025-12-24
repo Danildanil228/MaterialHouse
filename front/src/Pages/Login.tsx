@@ -69,7 +69,7 @@ export default function Login() {
                             <DarkModeButtonToggle/>
                         </div>
                         {error && (
-                      <div className="mb-4 p-2 text-xl! text-white rounded">
+                      <div className="mb-4 p-2 text-xl rounded">
                         {error}
                       </div>
                     )}

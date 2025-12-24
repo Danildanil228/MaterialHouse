@@ -1,9 +1,27 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
+const http = require('http');
+const socketIo = require('socket.io')
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"]
+  }
+});
+
 const PORT = 3000;
+
+io.on('connection', (socket) => {
+  console.log('Новое подключение:', socket.id);
+  
+  socket.on('disconnect', () => {
+    console.log('Отключение:', socket.id);
+  });
+});
 
 // Создаем пул подключений к БД
 const pool = new Pool({
@@ -83,6 +101,11 @@ app.post('/login', async (req, res) => {
         [user.id, `Пользователь ${user.username} вошел в систему`]
       );
     }
+    io.emit('new_notification', {
+      title: 'Новый вход',
+      message: `Пользователь ${user.username} вошел в систему`,
+      user_name: user.username
+    });
     
     res.json({ 
       success: true, 
@@ -122,9 +145,45 @@ app.get('/notifications', async (req,res) => {
     });
   }
 })
-
+// Удалить уведомление
+app.delete('/notifications/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    await pool.query('DELETE FROM notifications WHERE id = $1', [id]);
+    
+    res.json({ 
+      success: true, 
+      message: 'Уведомление удалено' 
+    });
+    
+  } catch (err) {
+    console.error('Ошибка удаления:', err);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Ошибка сервера' 
+    });
+  }
+});
+app.delete('/notifications', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM notifications');
+    
+    res.json({ 
+      success: true, 
+      message: 'Все уведомления удалены' 
+    });
+    
+  } catch (err) {
+    console.error('Ошибка удаления всех:', err);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Ошибка сервера' 
+    });
+  }
+});
 
 // Запуск сервера
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Сервер запущен на http://localhost:${PORT}`);
 });

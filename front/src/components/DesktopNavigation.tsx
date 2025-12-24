@@ -8,20 +8,22 @@ export default function DesktopNavigation() {
     { path: '/materials', label: 'Материалы' },
     { path: '/add', label: 'Добавить' },
     { path: '/profile', label: 'Профиль' },
+    { path: '/notifications', label: 'Уведомления'},
+    {}
   ];
   
   return (
-    <div className="hidden lg:block bg-white border-b border-gray-200">
-      <div className="container mx-auto px-4">
-        <div className="flex space-x-8 py-4">
+    <div className=" container hidden lg:block border rounded-2xl my-4!">
+      <div className="">
+        <div className="flex justify-between py-4">
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
               className={`text-lg ${
                 location.pathname === item.path 
-                  ? 'text-blue-600 font-semibold border-b-2 border-blue-600 pb-1' 
-                  : 'text-gray-600 hover:text-blue-500'
+                  ? 'opacity-50' 
+                  : ' hover:opacity-50'
               }`}
             >
               {item.label}

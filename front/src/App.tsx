@@ -1,26 +1,37 @@
+// front/src/App.tsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from "@/components/theme-provider";
 import Login from './Pages/Login';
 import Main from './Pages/Main';
 import Layout from './components/Layout';
 import Notifications from './Pages/Notifications';
+import ProtectedRoute from './components/ProtectedRoute';
+import AddUser from './Pages/AddUser';
 
 function App() {
   return (
     <BrowserRouter>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        
         <Routes>
           {/* Публичный маршрут - без навигации */}
           <Route path="/login" element={<Login />} />
           
           {/* Защищенные маршруты - с навигацией */}
-          <Route element={<Layout />}>
+          <Route path="/" element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<Navigate to="/main" replace />} />
             <Route path="/main" element={<Main />} />
-            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/Notifications" element={<Notifications />} />
+            <Route path="/materials" element={<div>Материалы (страница в разработке)</div>} />
+            <Route path="/add" element={<AddUser/>} />
+            <Route path="/profile" element={<div>Профиль (страница в разработке)</div>} />
           </Route>
           
-          <Route path="/" element={<Navigate to="/login" />} />
+          {/* Резервный редирект */}
+          <Route path="*" element={<Navigate to="/main" replace />} />
         </Routes>
       </ThemeProvider>
     </BrowserRouter>

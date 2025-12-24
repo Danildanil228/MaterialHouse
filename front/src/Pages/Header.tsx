@@ -1,4 +1,6 @@
 import DarkModeButtonToggle from "@/components/DarkModeButtonToggle";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -30,16 +32,26 @@ export default function Header(){
     }
     
     return(
-        <section className="container flex justify-between items-center border-b">
+        <section className="container flex justify-between items-center">
             <div className="flex items-center gap-5">
                 <div className="grid">
                     <p className="">Пользователь - {user.username}</p>
                     <p>Роль - {user.role}</p>
                 </div>
-                
-                <button onClick={handleLogout}>
-                    <img src="/log.png" className="icon-theme-aware w-5" alt="" />
-                </button>
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button variant="outline"><img src="/log.png" className="icon-theme-aware w-5" alt="" /></Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Выйти из аккаунта?</AlertDialogTitle>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Отмена</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleLogout}>Выйти</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
             <DarkModeButtonToggle/>
         </section>

@@ -24,6 +24,11 @@ export default function MobileNavigation() {
       label: 'Профиль', 
       icon: '/profile.png'
     },
+    {
+      path: '/notifications',
+      label: 'Уведомления',
+      icon: '/not.png'
+    }
   ];
   
   const isActive = (path: string) => {
