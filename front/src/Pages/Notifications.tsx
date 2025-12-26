@@ -174,18 +174,11 @@ export default function Notifications() {
         {notifications.map((notif) => (
           <div 
             key={notif.id} 
-            className={`p-4 border rounded-lg ${
-              !notif.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-            }`}
+            className={`p-4 border rounded-lg`}
           >
             <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
+              <div className="flex">
                 <h3 className="text-xs">{notif.title}</h3>
-                {!notif.read && (
-                  <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                    Новое
-                  </span>
-                )}
               </div>
               <div className="flex items-center gap-10">
                 <span className="text-sm">

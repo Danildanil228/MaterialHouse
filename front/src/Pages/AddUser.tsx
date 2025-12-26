@@ -9,13 +9,13 @@ interface CreatedUser {
   username: string;
   password: string;
   name: string;
-  surname: string;
+  secondname: string;
   role: string;
 }
 
 export default function AddUser() {
   const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
+  const [secondname, setSecondname] = useState("");
   const [role, setRole] = useState("");
   const [createdUsers, setCreatedUsers] = useState<CreatedUser[]>([]);
   const [loading, setLoading] = useState(false);
@@ -48,7 +48,7 @@ export default function AddUser() {
     setLoading(true);
 
     try {
-      const username = `${name}${surname}`.toLowerCase();
+      const username = `${name}${secondname}`.toLowerCase();
       const password = generatePassword();
 
       const response = await axios.post(`${API_BASE_URL}/users/add`, {
@@ -64,13 +64,13 @@ export default function AddUser() {
           username,
           password,
           name,
-          surname,
+          secondname,
           role
         };
 
         setCreatedUsers(prev => [newUser, ...prev]);
         setName("");
-        setSurname("");
+        setSecondname("");
         setRole("");
       }
     } catch (error) {
