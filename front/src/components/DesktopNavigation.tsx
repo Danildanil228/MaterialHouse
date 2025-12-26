@@ -37,7 +37,7 @@ export default function DesktopNavigation() {
   });
   
   return (
-    <div className=" container hidden lg:block border rounded-2xl my-4!">
+    <div className="container hidden lg:block border rounded-2xl my-4!">
       <div className="">
         <div className="flex justify-between py-4">
           {filteredNavItems.map((item) => {

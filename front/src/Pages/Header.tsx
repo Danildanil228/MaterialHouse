@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 interface User {
   username: string;
   role: string;
+  name: string;
+  secondname: string;
 }
 
 export default function Header(){
@@ -32,12 +34,17 @@ export default function Header(){
     }
     
     return(
-        <section className="container flex justify-between items-center">
-            <div className="flex items-center gap-5">
-                <div className="grid">
-                    <p className="">Пользователь - {user.username}</p>
-                    <p>Роль - {user.role}</p>
-                </div>
+        <section className=" container flex flex-wrap justify-between items-center border-b py-4! sm:border-none">
+            <p>
+                {user.role === 'admin' ? 'Администратор' : 
+                user.role === 'storekeeper' ? 'Работник склада' : 
+                user.role === 'accountant' ? 'Бухгалтер' : 
+                'Неизвестная роль'}
+            </p>
+            <p>{user.name} {user.secondname}</p>
+
+            <div className="items-center flex gap-5">
+                <DarkModeButtonToggle/>
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
                         <Button variant="outline"><img src="/log.png" className="icon-theme-aware w-5" alt="" /></Button>
@@ -53,7 +60,6 @@ export default function Header(){
                     </AlertDialogContent>
                 </AlertDialog>
             </div>
-            <DarkModeButtonToggle/>
         </section>
     );
 }

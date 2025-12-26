@@ -270,7 +270,7 @@ export default function AllUsers() {
   const selectedCount = table.getFilteredSelectedRowModel().rows.length;
 
   return (
-    <section className="container mx-auto p-4">
+    <section className="mx-auto">
       <h1 className="text-2xl font-bold mb-6">Все пользователи</h1>
       
       <div className="w-full">
@@ -377,29 +377,34 @@ export default function AllUsers() {
         
         <div className="flex flex-col lg:flex-row items-center justify-between gap-4 py-4">
           <div className="text-sm text-gray-600">
-            {table.getFilteredRowModel().rows.length} пользователей
+            Пользователей: {table.getFilteredRowModel().rows.length} 
           </div>
           <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Назад
-            </Button>
+            {table.getPageCount() > 1 && (
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                Назад
+              </Button>
+            )}
             <span className="text-sm">
               Страница {table.getState().pagination.pageIndex + 1} из{" "}
               {table.getPageCount()}
             </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Вперед
+              {table.getPageCount() > 1 && (
+                <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                Вперед
             </Button>
+            )}
           </div>
         </div>
       </div>
