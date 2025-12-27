@@ -55,7 +55,7 @@ export default function AddUser() {
         username,
         password,
         name,
-        surname,
+        secondname,
         role
       });
 
@@ -108,8 +108,8 @@ export default function AddUser() {
             <input 
               type="text" 
               placeholder="Фамилия" 
-              value={surname}
-              onChange={(e) => setSurname(e.target.value)}
+              value={secondname}
+              onChange={(e) => setSecondname(e.target.value)}
               className="px-4 py-3 border rounded focus:outline-none focus:ring-1 text-xl"
               required
             />
@@ -133,7 +133,7 @@ export default function AddUser() {
         <Button 
           type="submit" 
           className="w-full lg:w-fit px-8 py-3 text-xl"
-          disabled={loading || !name || !surname || !role}
+          disabled={loading || !name || !secondname || !role}
         >
           {loading ? "Создание..." : "Создать пользователя"}
         </Button>
@@ -155,7 +155,7 @@ export default function AddUser() {
                   <span className="">Пароль:</span> {user.password}
                 </p>
                 <p className="">
-                  {user.name} {user.surname} • {user.role}
+                  {user.name} {user.secondname} • {user.role}
                 </p>
               </div>
             ))}
