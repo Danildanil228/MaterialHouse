@@ -1,6 +1,5 @@
 import { useState } from "react";
 import DarkModeButtonToggle from "@/components/DarkModeButtonToggle";
-import "./Login.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "@/components/api";
@@ -40,7 +39,7 @@ export default function Login() {
 
   return (
         <section className="flex justify-center items-center min-h-screen container">
-            <div className="text-center">
+            <form onSubmit={handleSubmit} className="text-center">
                 <div>
                     <h1 className="mb-4">Авторизация в систему</h1>
                     <div className="grid gap-5">
@@ -75,7 +74,7 @@ export default function Login() {
                     )}
                     </div>
                 </div>
-            </div>
+            </form>
         </section>
   );
 }
