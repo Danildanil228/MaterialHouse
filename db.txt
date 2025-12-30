@@ -1,11 +1,12 @@
 create database materialHousedb;
 create table users(
-  id serial primary key,
-  username varchar(50) unique not null,
-  password varchar(255) not null,
-  role varchar(20) not null check (role IN ('admin', 'storekeeper', 'accountant')),
-  name varchar(100),
-  secondname varhcar(100)
+	id serial primary key,
+	username varchar(100) unique not null,
+	password text not null,
+	role varchar(20) not null check (role IN ('admin', 'storekeeper', 'accountant')),
+	name varchar(100),
+	secondname varhcar(100),
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 create table notifications (
 	id serial primary key,
