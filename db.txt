@@ -10,6 +10,7 @@ create table users(
 	email VARCHAR(100),
 	phone VARCHAR(20),
 	birth_date DATE;
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 
 create table notifications (
