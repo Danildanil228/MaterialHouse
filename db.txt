@@ -6,7 +6,10 @@ create table users(
 	role varchar(20) not null check (role IN ('admin', 'storekeeper', 'accountant')),
 	name varchar(100),
 	secondname varchar(100),
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	email VARCHAR(100),
+	phone VARCHAR(20),
+	birth_date DATE;
 )
 
 create table notifications (
